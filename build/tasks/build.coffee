@@ -6,6 +6,7 @@ $ = require('gulp-load-plugins')()
 { exec, spawn } = require 'child_process'
 chalk = require 'chalk'
 localtunnel = require 'localtunnel'
+path = require 'path'
 
 # TODO: get from configs
 PORT = 3000
@@ -13,11 +14,15 @@ PORT = 3000
 colorsIndex = 0
 colors = ['cyan', 'magenta', 'blue', 'yellow']
 
+
 module.exports = (gulp, config) ->
 
   # Get local node module binary path
   bin = (binary) ->
-    "./node_modules/.bin/#{binary}"
+    path.join __dirname, "../../node_modules/.bin/#{binary}"
+
+  absolute = (dirPath) ->
+    path.join process.cwd(), dirPath
 
   handleErrors = ->
     $.plumber errorHandler: (error) ->
@@ -40,7 +45,8 @@ module.exports = (gulp, config) ->
     split = _.compact command.split /\s+/
     command = split.shift()
 
-    spawned = spawn command, split, _.defaults {}, options, cwd: process.cwd()
+    spawned = spawn command, split, _.defaults {}, options,
+      cwd: process.cwd() # path.join __dirname, '../../' # process.cwd()
 
     commandEnding = _.last command.split('/')
     commandSpaces = 9 - commandEnding.length
@@ -182,7 +188,7 @@ module.exports = (gulp, config) ->
 
     # TODO: get paths from configs
     # TODO: these paths aren't working...
-    run "#{bin 'nodemon'} -e js,ts,json --watch server --watch common --watch webpack.config.js ./server", cb
+    run "#{bin 'nodemon'} -e js,ts,json --watch server --watch common --watch #{absolute 'webpack.config.js'} #{absolute '.'}", cb
 
   # TODO: configure port
   gulp.task 'slc:arc', (cb) ->

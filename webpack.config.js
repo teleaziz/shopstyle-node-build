@@ -74,6 +74,10 @@ var config = {
     progress: true
   },
 
+  resolveLoader: {
+    root: path.join(__dirname, './node_modules')
+  },
+
   resolve: {
     extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.ts', '.json'],
     alias: {
