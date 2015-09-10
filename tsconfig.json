@@ -1,0 +1,42 @@
+{
+    "version": "1.5.0-beta",
+    "typings": "./typings/tsd.d.ts",
+    "compileOnSave": false,
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "rootDir": ".",
+        "outDir": "./dist",
+        "isolatedModules": false,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": true,
+        "noImplicitAny": true,
+        "removeComments": false,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "awesomeTypescriptLoaderOptions": {
+        "emitRequireType": false,
+        "forkChecker": true,
+        "usePrecompiledFiles": true,
+        "useCache": true
+    },
+    "filesGlob": [
+        "./client/**/*.ts",
+        "./common/**/*.ts",
+        "./server/**/*.ts",
+        "./config/**/*.ts",
+        "./build/**/*.ts",
+        "!./client/**/*.d.ts",
+        "!./common/**/*.d.ts",
+        "!./server/**/*.d.ts",
+        "!./config/**/*.d.ts",
+        "!./build/**/*.d.ts",
+        "!./build/templates/**/*"
+    ],
+    "files": [
+        "./build/tasks/ts-serve.ts"
+    ]
+}

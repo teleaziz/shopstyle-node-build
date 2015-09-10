@@ -1,0 +1,9 @@
+node_modules/
+bower_components/
+dist/
+tmp/
+public/
+typings/
+.strong-pm/
+npm-debug.log
+.awcache
