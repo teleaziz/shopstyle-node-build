@@ -208,7 +208,7 @@ module.exports = (gulp, config) ->
         hideGenerator: true
         noLib: false
         target: 'ES5'
-        name: 'ionic-boilerplate'
+        name: 'shopstyle-cms'
         theme: 'default'
         ignoreCompilerErrors: true
         experimentalDecorators: true

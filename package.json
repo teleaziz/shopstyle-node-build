@@ -1,5 +1,5 @@
 {
-  "name": "ss-node-build",
+  "name": "@popsugar/shopstyle-node-build",
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
