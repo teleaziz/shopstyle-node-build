@@ -30,7 +30,7 @@ var paths = {
   server: 'server',
   build: 'build',
   components: 'components'
-}
+};
 
 // TODO: how to watch and update on changes
 var componentsPath = path.join('.', paths.client, paths.components);
@@ -62,6 +62,7 @@ var entryComponents = componentPaths.reduce(function (memo, filePath, index) {
   return memo;
 }, {});
 
+// TODO: _.merge webpack configs
 var config = {
   cache: DEV,
   // debug: DEV,

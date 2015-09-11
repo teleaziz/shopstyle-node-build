@@ -1,12 +1,18 @@
 # TODO: move to typescript and independent task files
 
 _ = require 'lodash'
-runSequence = require 'run-sequence'
 $ = require('gulp-load-plugins')()
 { exec, spawn } = require 'child_process'
 chalk = require 'chalk'
 localtunnel = require 'localtunnel'
 path = require 'path'
+dts = require 'dts-bundle'
+glob = require 'glob'
+fs = require 'fs'
+notifier = require 'node-notifier'
+
+pkg = require path.join process.cwd(), 'package.json'
+tsConfig = require path.join process.cwd(), 'tsconfig.json'
 
 # TODO: get from configs
 PORT = 3000
@@ -16,6 +22,7 @@ colors = ['cyan', 'magenta', 'blue', 'yellow']
 
 
 module.exports = (gulp, config) ->
+  runSequence = require('run-sequence').use gulp
 
   # Get local node module binary path
   bin = (binary) ->
@@ -200,6 +207,59 @@ module.exports = (gulp, config) ->
 
   gulp.task 'karma:watch', (cb) ->
     run "#{bin 'karma'} start karma.config.js", cb
+
+  gulp.task 'dts:bundle', (cb) ->
+
+    dts.bundle
+      name: pkg.name
+      main: path.join process.cwd(), './index.ts' # TODO: get from configs pkg.main
+      # TODO: get from configs
+      out: path.join process.cwd(), './dist/typings.d.ts'
+
+    cb()
+
+
+  # Freely make a bundle of typings. good for requiring typescript files directly
+  gulp.task 'typings:bundle', (cb) ->
+    fileString = '';
+    prefix = pkg.name
+
+    basePath = path.join process.cwd(), './dist'
+
+    outPath = path.join basePath, 'typings.d.ts'
+
+    moduleBasePath = basePath
+
+    # TODO: check if is directory first
+    # if pkg.main
+    #   moduleBasePath = path.join basePath, pkg.main
+
+    # TODO: option to have .ts or no extension or both
+
+    # TODO: configs for these paths
+    files = glob.sync path.join basePath, '*/**/*.d.ts'
+    for file in files
+      filePath = path.relative(moduleBasePath, file).replace /\.d\.ts$/, ''
+      fileContent = fs.readFileSync file, 'utf8'
+      prettyContent = fileContent.replace /\n/g, '\n  '
+
+      prettyContent = prettyContent.replace /(import.*?from.*?['"])(\..*?)(['"])/g, (match, start, importPath, end) ->
+        relativePath = "#{prefix}/" + path.relative moduleBasePath, path.join path.dirname(file), importPath
+        return [start, relativePath, end].join ''
+
+      prettyContent = prettyContent.replace /export\s+declare/g, 'export'
+      prettyContent = prettyContent.replace /declare\s+var/g, 'var'
+
+      fileString += """
+        declare module '#{prefix}/#{filePath}' {
+          #{prettyContent}
+        }
+        \n
+      """
+
+    fs.writeFileSync outPath, fileString
+
+    cb()
 
   gulp.task 'typedoc', ->
     gulp

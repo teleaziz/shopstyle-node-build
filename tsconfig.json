@@ -23,6 +23,9 @@
         "usePrecompiledFiles": true,
         "useCache": true
     },
+    "formatCodeOptions": {
+        "indentSize": 2
+    },
     "filesGlob": [
         "./client/**/*.ts",
         "./common/**/*.ts",
@@ -36,7 +39,5 @@
         "!./build/**/*.d.ts",
         "!./build/templates/**/*"
     ],
-    "files": [
-        "./build/tasks/ts-serve.ts"
-    ]
+    "files": []
 }
