@@ -20,7 +20,6 @@ PORT = 3000
 colorsIndex = 0
 colors = ['cyan', 'magenta', 'blue', 'yellow']
 
-
 module.exports = (gulp, config) ->
   runSequence = require('run-sequence').use gulp
 
@@ -104,16 +103,20 @@ module.exports = (gulp, config) ->
         throw err if err
         cb()
 
-  gulp.task 'develop', [
+  # TODO: clean too (?)
+  gulp.task 'develop', (cb) ->
+    runSequence [
+      'config'
+    ], [
       # 'webpack:watch'
       'nodemon'
       # 'schemas'
       'slc:arc'
       # 'karma:watch' # TODO: fix and add back.
       'watch'
-      # 'localtunnel' # FIXME: this causes problems
+      # 'localtunnel' # FIXME: when your laptop goes to sleep localtunnel connection dies and kills whole server so removing this
       'typedoc'
-    ]
+    ], cb
 
   watch = (pattern, callback) ->
     if _.isArray callback
@@ -128,6 +131,7 @@ module.exports = (gulp, config) ->
     watch 'client/**/*.scss',                       ['patternlint:scss']
     watch '{client,common,server,build}/**/*.ts',   ['tslint', 'typedoc', 'patternlint:ts']
     watch 'client/**/*.html',                       ['htmlhint', 'patternlint:html']
+    watch 'config/**/*',                            ['config']
     # watch 'common/{schemas,models}/**/*.json',      ['schemas']
     watch '{bower,tsd,package}.json',               ['install']
     null
@@ -222,7 +226,7 @@ module.exports = (gulp, config) ->
   # Freely make a bundle of typings. good for requiring typescript files directly
   gulp.task 'typings:bundle', (cb) ->
     fileString = '';
-    prefix = pkg.name
+    prefix = pkg.name + '/dist' # TODO: read from configs or tsconfig.json
 
     basePath = path.join process.cwd(), './dist'
 
@@ -257,7 +261,39 @@ module.exports = (gulp, config) ->
         \n
       """
 
+    # manually remove any /// <reference path="..." /> from the compiled code
+    # so typescript doesn't complain about duplication
+    fileString = fileString.replace /\/\/\/.*?<.*?reference.*?path.*?\n/g, '\n'
+
     fs.writeFileSync outPath, fileString
+
+    cb()
+
+  gulp.task 'config', (cb) ->
+    # TODO: get path pieces like 'dist', from configs
+    outPath = path.join process.cwd(), './dist/client/config.js'
+    jsonPath = path.join process.cwd(), './dist/common/config.json'
+
+    # TODO: always use fresh config
+    config = require '@popsugar/shopstyle-node-config'
+
+    # TODO: use safe json stringify
+    configString = config.toString()
+    # TODO: get from configs with defaults
+    moduleName = 'app'
+    configConstantName = 'config'
+
+    # TODO: render a typescript file too and/or json file for importing in TS files?
+    fileString = """
+      window.config = #{configString};
+
+      angular
+        .module('#{moduleName}')
+        .constant('#{configConstantName}', window.config);
+    """
+
+    fs.writeFileSync outPath, fileString
+    fs.writeFileSync jsonPath, configString
 
     cb()
 
@@ -274,7 +310,7 @@ module.exports = (gulp, config) ->
         hideGenerator: true
         noLib: false
         target: 'ES5'
-        name: 'shopstyle-cms'
+        name: 'shopstyle-node-boilerplate'
         theme: 'default'
         ignoreCompilerErrors: true
         experimentalDecorators: true

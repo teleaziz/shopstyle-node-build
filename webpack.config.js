@@ -7,6 +7,7 @@ var Clean                 = require('clean-webpack-plugin');
 var HtmlWebpackPlugin     = require('html-webpack-plugin');
 var fs                    = require('fs');
 var WebpackNotifierPlugin = require('webpack-notifier');
+var config                = require('@popsugar/shopstyle-node-config');
 
 // module.exports = new SSBuild(require('ss-config')).webpack;
 
@@ -21,7 +22,7 @@ var DEV = !argv.release;
 var STYLE_LOADER = 'style-loader';
 var CSS_LOADER = DEV ? 'css-loader' : 'css-loader?minimize';
 var GLOBALS = {
-  'process.env.NODE_ENV': process.env.NODE_ENV || DEV ? '"development"' : '"production"'
+  'ENV': process.env.NODE_ENV || DEV ? '"development"' : '"production"'
 };
 
 var paths = {
@@ -33,39 +34,37 @@ var paths = {
 };
 
 // TODO: how to watch and update on changes
-var componentsPath = path.join('.', paths.client, paths.components);
+var componentsPath = path.join(paths.client, paths.components);
 
-// TODO: get from routes config instead
-var components = glob
-  .sync(path.join(componentsPath, '*'))
-  .map(function (path) {
-    return _.last(path.split('/'));
+var components = (config.routes || [])
+  .filter(function (routeConfig) {
+    return !!routeConfig.component;
   })
-  // Exclude components all depend on,
-  // TODO: find a way to automate this
-  .filter(function (name) {
-    // TODO: use route config instead
-    return !_.contains(['app', 'head', 'body', 'side-menu', 'targeting-rules-editor'], name);
-    // return _.contains(['data', 'metrics'], name);
+  .map(function (routeConfig) {
+    var source;
+    var name = routeConfig.component;
+
+    if (!routeConfig.path) {
+      if (routeConfig.source) {
+        source = path.join(process.cwd(), 'node_modules', routeConfig.source);
+      } else {
+        source = process.cwd();
+      }
+
+      routeConfig.path = path.join(source, componentsPath, name, name + '-component.ts');
+    }
+
+    return routeConfig;
   });
 
-var componentPaths = components.map(function (name) {
-  return path.join(process.cwd(), componentsPath, name, name + '-component.ts');
-});
-
-var entryComponents = componentPaths.reduce(function (memo, filePath, index) {
-  memo[components[index]] = [
-    filePath
-    // , 'webpack-hot-middleware/client'
-    // , 'webpack/hot/dev-server'
-  ];
+var entryComponents = components.reduce(function (memo, componentConfig) {
+  memo[componentConfig.component] = [componentConfig.path];
   return memo;
 }, {});
 
 // TODO: _.merge webpack configs
 var config = {
   cache: DEV,
-  // debug: DEV,
   watch: DEV,
   unsafeCache: DEV,
 
@@ -79,6 +78,8 @@ var config = {
     root: path.join(__dirname, './node_modules')
   },
 
+  context: process.cwd(),
+
   resolve: {
     extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.ts', '.json'],
     alias: {
@@ -90,17 +91,15 @@ var config = {
     ]
   },
 
+  // TODO: this being used by server middleware? if not kill
   devServer: {
     contentBase: './dist/client',
-    // contentBase: "http://localhost:3000/",
-
     inline: true,
     hot: true,
     historyApiFallback: true,
-    // publicPath: "http://localhost:3000/",
     stats: { colors: true },
     proxy: {
-      "api": "http://localhost:3000"
+      api: "http://localhost:3000"
     }
   },
 
@@ -114,7 +113,8 @@ var config = {
         loader: 'json'
       }, {
         test: /\.ts$/,
-        loader: 'awesome-typescript'
+        loader: 'awesome-typescript',
+        exclude: /\.d\.ts$/
       }, {
         test: /\.css$/,
         loader: [STYLE_LOADER, CSS_LOADER].join('!')
@@ -142,7 +142,6 @@ var config = {
     init: [
       path.join(process.cwd(), 'client/scripts/init.ts')
       , 'webpack-hot-middleware/client?reload=true&overlay=true'
-      // , 'webpack/hot/dev-server'
     ]
   }),
   output: {
@@ -150,11 +149,9 @@ var config = {
     publicPath: '/',
     filename: '[name]-[hash].js'
   },
-  // devtool: DEV ? 'eval' : false,
   plugins: [
     new webpack.PrefetchPlugin(path.join(process.cwd(), 'client/scripts/dependencies/app.ts')),
     new webpack.PrefetchPlugin(path.join(process.cwd(), 'client/styles/dependencies/app.scss')),
-    // new Clean(['dist/client']),
     new webpack.optimize.CommonsChunkPlugin('common', 'common-[hash].js'),
     new webpack.optimize.AggressiveMergingPlugin(),
     new HtmlWebpackPlugin({

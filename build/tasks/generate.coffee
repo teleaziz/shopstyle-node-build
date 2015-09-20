@@ -60,9 +60,13 @@ class Generate
 
   createTemplateCommand: (templateName) ->
     @gulp.task "#{@options.taskName}:#{templateName}", (done) =>
+      # TODO: be able to load base templates and per project templates
+      baseDir = path.join __dirname, '../../'
+      console.log 'baseDir', baseDir
+      # baseDir = process.cwd()
 
       # Allows for _config.json, _config.js, _config.coffee, etc
-      config = require path.join process.cwd(), @options.templatesPath, templateName, '_config'
+      config = require path.join @options.templatesPath, templateName, '_config'
       expect(config).to.have.property('outputDir').that.is.a 'string'
 
       prompts = config.prompts or []
@@ -90,7 +94,7 @@ class Generate
         outputPath = path.join process.cwd(), config.outputDir
         outputDir = _.template(outputPath) answers
 
-        src = path.join process.cwd(), @options.templatesPath, templateName, '*'
+        src = path.join @options.templatesPath, templateName, '*'
 
         @gulp
           .src [ src, '!**/_config.*' ]
