@@ -106,20 +106,19 @@ module.exports = (gulp, config) ->
   # TODO: clean too (?)
   gulp.task 'develop', (cb) ->
     runSequence(
-    'install'
-    'config'
-    [
-      # 'webpack:watch'
-      'nodemon'
-      # 'schemas'
-      'slc:arc'
-      # 'karma:watch' # TODO: fix and add back.
-      'watch'
-      # 'localtunnel' # FIXME: when your laptop goes to sleep localtunnel connection dies and kills whole server so removing this
-      'typedoc'
-    ]
-    cb
-  )
+      'install'
+      'config'
+      [
+        'nodemon'
+        # 'schemas'
+        'slc:arc'
+        # 'karma:watch' # TODO: fix and add back.
+        'watch'
+        # 'localtunnel' # FIXME: when your laptop goes to sleep localtunnel connection dies and kills whole server so removing this
+        'typedoc'
+      ]
+      cb
+    )
 
   watch = (pattern, callback) ->
     if _.isArray callback
