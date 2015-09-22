@@ -8,7 +8,7 @@ localtunnel = require 'localtunnel'
 path = require 'path'
 dts = require 'dts-bundle'
 glob = require 'glob'
-fs = require 'fs'
+fs = require 'fs-extra'
 notifier = require 'node-notifier'
 
 pkg = require path.join process.cwd(), 'package.json'
@@ -105,9 +105,10 @@ module.exports = (gulp, config) ->
 
   # TODO: clean too (?)
   gulp.task 'develop', (cb) ->
-    runSequence [
-      'config'
-    ], [
+    runSequence(
+    'install'
+    'config'
+    [
       # 'webpack:watch'
       'nodemon'
       # 'schemas'
@@ -116,7 +117,9 @@ module.exports = (gulp, config) ->
       'watch'
       # 'localtunnel' # FIXME: when your laptop goes to sleep localtunnel connection dies and kills whole server so removing this
       'typedoc'
-    ], cb
+    ]
+    cb
+  )
 
   watch = (pattern, callback) ->
     if _.isArray callback
@@ -265,7 +268,7 @@ module.exports = (gulp, config) ->
     # so typescript doesn't complain about duplication
     fileString = fileString.replace /\/\/\/.*?<.*?reference.*?path.*?\n/g, '\n'
 
-    fs.writeFileSync outPath, fileString
+    fs.outputFileSync outPath, fileString
 
     cb()
 
@@ -292,8 +295,8 @@ module.exports = (gulp, config) ->
         .constant('#{configConstantName}', window.config);
     """
 
-    fs.writeFileSync outPath, fileString
-    fs.writeFileSync jsonPath, configString
+    fs.outputFileSync outPath, fileString
+    fs.outputFileSync jsonPath, configString
 
     cb()
 
