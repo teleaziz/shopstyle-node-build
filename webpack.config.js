@@ -81,7 +81,7 @@ var config = {
   context: process.cwd(),
 
   resolve: {
-    extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.ts', '.json'],
+    extensions: ['', '.ts', '.js'],
     alias: {
 
     },
