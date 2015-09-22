@@ -6,7 +6,7 @@ $ = require('gulp-load-plugins')()
 chalk = require 'chalk'
 localtunnel = require 'localtunnel'
 path = require 'path'
-dts = require 'dts-bundle'
+# dts = require 'dts-bundle' # package causing issues. do'nt know why
 glob = require 'glob'
 fs = require 'fs-extra'
 notifier = require 'node-notifier'
@@ -215,15 +215,15 @@ module.exports = (gulp, config) ->
   gulp.task 'karma:watch', (cb) ->
     run "#{bin 'karma'} start karma.config.js", cb
 
-  gulp.task 'dts:bundle', (cb) ->
+  # gulp.task 'dts:bundle', (cb) ->
 
-    dts.bundle
-      name: pkg.name
-      main: path.join process.cwd(), './index.ts' # TODO: get from configs pkg.main
-      # TODO: get from configs
-      out: path.join process.cwd(), './dist/typings.d.ts'
+  #   dts.bundle
+  #     name: pkg.name
+  #     main: path.join process.cwd(), './index.ts' # TODO: get from configs pkg.main
+  #     # TODO: get from configs
+  #     out: path.join process.cwd(), './dist/typings.d.ts'
 
-    cb()
+  #   cb()
 
 
   # Freely make a bundle of typings. good for requiring typescript files directly
