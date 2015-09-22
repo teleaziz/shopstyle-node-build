@@ -55,8 +55,5 @@
     "webpack-hot-middleware": "^2.2.0",
     "webpack-notifier": "^1.2.1",
     "yargs": "^3.24.0"
-  },
-  "devDependencies": {
-    "dts-bundle": "^0.3.0"
   }
 }
