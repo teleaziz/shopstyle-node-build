@@ -141,7 +141,7 @@ var config = {
   entry: _.extend({}, entryComponents, {
     init: [
       path.join(process.cwd(), 'client/scripts/init.ts')
-      , path.join(__dirname, 'webpack-hot-middleware/client.js?reload=true&overlay=true')
+      , path.join(__dirname, 'node_modules/webpack-hot-middleware/client.js?reload=true&overlay=true')
     ]
   }),
   output: {
