@@ -144,7 +144,7 @@ module.exports = (gulp, config) ->
     run "#{bin 'dtsgen'} --out dist/schemas.d.ts ./common/schemas/**/*.json ./common/models/**/*.json", cb
 
   gulp.task 'tsd:link', (cb) ->
-    run "#{bin 'tsd'} link"
+    run "#{bin 'tsd'} link", cb
 
   gulp.task 'localtunnel', ->
     # TODO: get port from configs
