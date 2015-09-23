@@ -107,6 +107,7 @@ module.exports = (gulp, config) ->
   gulp.task 'develop', (cb) ->
     runSequence(
       'install'
+      'tsd:link'
       'config'
       [
         'nodemon'
@@ -141,6 +142,9 @@ module.exports = (gulp, config) ->
   # TODO: fix the dtsgen lib it sucks
   gulp.task 'schemas', (cb) ->
     run "#{bin 'dtsgen'} --out dist/schemas.d.ts ./common/schemas/**/*.json ./common/models/**/*.json", cb
+
+  gulp.task 'tsd:link', (cb) ->
+    run "#{bin 'tsd'} link"
 
   gulp.task 'localtunnel', ->
     # TODO: get port from configs
