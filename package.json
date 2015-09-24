@@ -2,6 +2,9 @@
   "name": "@popsugar/shopstyle-node-build",
   "version": "0.0.20",
   "main": "index.js",
+  "scripts": {
+    "postinstall": "npm install strongloop nodemon webpack-dev-middleware"
+  },
   "dependencies": {
     "@popsugar/shopstyle-node-config": "0.0.10",
     "awesome-typescript-loader": "^0.13.1",
