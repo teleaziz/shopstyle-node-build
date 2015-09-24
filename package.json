@@ -1,6 +1,6 @@
 {
   "name": "@popsugar/shopstyle-node-build",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "main": "index.js",
   "dependencies": {
     "@popsugar/shopstyle-node-config": "0.0.10",
