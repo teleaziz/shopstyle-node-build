@@ -14,7 +14,7 @@ import { <%= className %> }     from './<%= dashName %>-service';
 })
 
 @View({
-  templateUrl: './<%= dashName %>.html'
+  template: require('./<%= dashName %>.html')
 })
 
 /**
