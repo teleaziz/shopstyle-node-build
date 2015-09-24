@@ -36,7 +36,34 @@ var paths = {
 // TODO: how to watch and update on changes
 var componentsPath = path.join(paths.client, paths.components);
 
-var components = (config.routes || [])
+var routes = config.routes || [];
+
+// Load route configs from @State decorators in component files
+var componentFiles = glob.sync(path.join(process.cwd(), '/components/**/*-component.ts'));
+componentFiles.forEach(function (file) {
+  var conrents = fs.readFileSync(files, 'utf8');
+  var matches = contents.match(/@State\(([\s\S]+?)\)/);
+  var configString = matches && matches[1];
+  var routeConfig;
+
+  if (configString) {
+    try {
+      routeConfig = JSON.parse(matches[1]);
+    } catch (error) {
+      console.warn('Could not parse state config string: ', configString);
+    }
+  }
+
+  if (routeConfig) {
+    if (!routeConfig.component) {
+      routeConfig.component = file.match(/(.*?)-component\.ts$/)[1];
+    }
+
+    routes.push(routeConfig);
+  }
+});
+
+var components = routes
   .filter(function (routeConfig) {
     return !!routeConfig.component;
   })
@@ -45,8 +72,8 @@ var components = (config.routes || [])
     var name = routeConfig.component;
 
     if (!routeConfig.path) {
-      if (routeConfig.source) {
-        source = path.join(process.cwd(), 'node_modules', routeConfig.source);
+      if (routeConfig.module) {
+        source = path.join(process.cwd(), 'node_modules', routeConfig.module);
       } else {
         source = process.cwd();
       }

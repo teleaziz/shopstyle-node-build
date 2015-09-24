@@ -3,7 +3,7 @@
   "version": "0.0.21",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npm install strongloop nodemon webpack-dev-middleware"
+    "postinstall": "npm install strongloop nodemon webpack-dev-middleware tsd"
   },
   "dependencies": {
     "@popsugar/shopstyle-node-config": "0.0.10",
