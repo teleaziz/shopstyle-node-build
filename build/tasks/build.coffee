@@ -106,7 +106,7 @@ module.exports = (gulp, config) ->
   # TODO: clean too (?)
   gulp.task 'develop', (cb) ->
     runSequence(
-      # 'install'
+      'install'
       'tsd:link'
       'config'
       [
