@@ -39,24 +39,24 @@ var componentsPath = path.join(paths.client, paths.components);
 var routes = config.routes || [];
 
 // Load route configs from @State decorators in component files
-var componentFiles = glob.sync(path.join(process.cwd(), '/components/**/*-component.ts'));
+var componentFiles = glob.sync(path.join(process.cwd(), 'client/components/**/*-component.ts'));
 componentFiles.forEach(function (file) {
-  var conrents = fs.readFileSync(files, 'utf8');
+  var contents = fs.readFileSync(file, 'utf8');
   var matches = contents.match(/@State\(([\s\S]+?)\)/);
   var configString = matches && matches[1];
   var routeConfig;
 
   if (configString) {
     try {
-      routeConfig = JSON.parse(matches[1]);
+      routeConfig = (new Function('return ' + configString))();
     } catch (error) {
       console.warn('Could not parse state config string: ', configString);
     }
   }
 
-  if (routeConfig) {
+  if (routeConfig && !routeConfig.abstract) {
     if (!routeConfig.component) {
-      routeConfig.component = file.match(/(.*?)-component\.ts$/)[1];
+      routeConfig.component = file.match(/([^\/]+?)-component\.ts$/)[1];
     }
 
     routes.push(routeConfig);
