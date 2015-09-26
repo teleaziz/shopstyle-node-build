@@ -48,6 +48,10 @@ module.exports = (gulp, config) ->
 
   lastCommand = null
   run = (command, cb, options = {}) =>
+    defaultOptions = env: process.env
+    
+    options = _.merge {}, defaultOptions, options
+  
     split = _.compact command.split /\s+/
     command = split.shift()
 
@@ -210,7 +214,7 @@ module.exports = (gulp, config) ->
   # TODO: configure port
   gulp.task 'slc:arc', (cb) ->
     # TODO: port config
-    run "#{bin 'slc'} arc --cli", cb, env: _.extend {}, process.env, PORT: 5494
+    run "#{bin 'slc'} arc --cli", cb, env: PORT: 5494
 
   gulp.task 'webpack:watch', (cb) ->
     run bin('webpack'), cb
@@ -231,7 +235,7 @@ module.exports = (gulp, config) ->
 
   # Freely make a bundle of typings. good for requiring typescript files directly
   gulp.task 'typings:bundle', (cb) ->
-    fileString = '';
+    fileString = ''
     prefix = pkg.name + '/dist' # TODO: read from configs or tsconfig.json
 
     basePath = path.join process.cwd(), './dist'
@@ -305,7 +309,12 @@ module.exports = (gulp, config) ->
 
   gulp.task 'typedoc', ->
     gulp
-      .src '+(client|server|common)/**/*.ts'
+      .src [
+        '+(client|server|common)/**/*.ts' 
+        # TODO: automate this and only include things that are imported as a dependency
+        # 'node_modules/@popsugar/*/+(client|server|common)/**/*.ts',  
+        # '!**/*.d.ts'
+      ]
       .pipe(handleErrors())
       # TODO: use tsconfig and typeconfig
       .pipe $.typedoc

@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@popsugar/shopstyle-node-config": "0.0.10",
+    "ansi-regex": "^2.0.0",
     "awesome-typescript-loader": "^0.13.1",
     "chai": "^3.2.0",
     "chalk": "^1.1.1",
@@ -46,7 +47,9 @@
     "require-dir": "^0.3.0",
     "run-sequence": "^1.1.2",
     "sass-loader": "^2.0.1",
+    "source-map-support": "^0.3.2",
     "steve8708-typescript-register": "^1.1.4",
+    "strip-ansi": "^3.0.0",
     "strongloop": "^5.0.0",
     "style-loader": "^0.12.3",
     "tsd": "^0.6.4",

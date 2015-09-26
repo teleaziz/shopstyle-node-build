@@ -9,16 +9,14 @@ var fs                    = require('fs');
 var WebpackNotifierPlugin = require('webpack-notifier');
 var config                = require('@popsugar/shopstyle-node-config');
 
-// module.exports = new SSBuild(require('ss-config')).webpack;
-
-// TODO: load from process.cwd()
+// TODO: move to typescript
 var pkg = require(path.join(process.cwd(),'./package.json'));
 
 // TODO: create super entry that includes all components in one
 
 var argv = minimist(process.argv.slice(2));
-var HOT = true;
-var DEV = !argv.release;
+var DEV = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
+var HOT = DEV;
 var STYLE_LOADER = 'style-loader';
 var CSS_LOADER = DEV ? 'css-loader' : 'css-loader?minimize';
 var GLOBALS = {
@@ -36,7 +34,9 @@ var paths = {
 // TODO: how to watch and update on changes
 var componentsPath = path.join(paths.client, paths.components);
 
-var routes = config.routes || [];
+var routes = (config.routes ? config.routes.slice() : []);
+
+config.routes = config.routes || [];
 
 // Load route configs from @State decorators in component files
 var componentFiles = glob.sync(path.join(process.cwd(), 'client/components/**/*-component.ts'));
@@ -54,12 +54,16 @@ componentFiles.forEach(function (file) {
     }
   }
 
-  if (routeConfig && !routeConfig.abstract) {
+  if (routeConfig) {
     if (!routeConfig.component) {
       routeConfig.component = file.match(/([^\/]+?)-component\.ts$/)[1];
     }
 
     routes.push(routeConfig);
+    
+    if (!routeConfig.abstract) {
+      config.routes.push(routeConfig);
+    }
   }
 });
 
@@ -113,8 +117,10 @@ var config = {
 
     },
     modulesDirectories: [
-      'node_modules',
-      'bower_components'
+      path.join(process.cwd(), 'node_modules'),
+      path.join(process.cwd(), 'bower_components'),
+      path.join(__dirname, 'node_modules'),
+      path.join(__dirname, 'bower_components')
     ]
   },
 
@@ -163,13 +169,12 @@ var config = {
       }
     ],
     // TODO: noParse all bower components
-    noParse: /bower_components\/ace-builds\/src-noconflict/
+    noParse: /(\/ace-builds|\.d\.ts$)/
   },
   entry: _.extend({}, entryComponents, {
     init: [
       path.join(process.cwd(), 'client/scripts/init.ts')
-      , path.join(__dirname, 'node_modules/webpack-hot-middleware/client.js?reload=true&overlay=true')
-    ]
+    ].concat(DEV ? [path.join(__dirname, 'node_modules/webpack-hot-middleware/client.js?reload=true&overlay=true')] : [])
   }),
   output: {
     path: path.join(process.cwd(), './dist/client'),
@@ -202,7 +207,7 @@ var config = {
   ] : [
     // Release plugins
     new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin(),
+    // new webpack.optimize.UglifyJsPlugin(), // TODO: readd
     new webpack.optimize.AggressiveMergingPlugin()
   ])
 };
