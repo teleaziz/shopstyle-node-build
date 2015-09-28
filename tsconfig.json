@@ -37,7 +37,7 @@
         "!./server/**/*.d.ts",
         "!./config/**/*.d.ts",
         "!./build/**/*.d.ts",
-        "!./build/templates/**/*"
+        "!./build/templates/**/*.ts"
     ],
     "files": []
 }

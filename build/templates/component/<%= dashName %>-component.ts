@@ -25,6 +25,6 @@ export class <%= className %>Component {
   private <%= camelName %>: <%= className %>;
 
   constructor() {
-    this.<%= camelName %>.greet();
+
   }
 }

@@ -49,9 +49,9 @@ module.exports = (gulp, config) ->
   lastCommand = null
   run = (command, cb, options = {}) =>
     defaultOptions = env: process.env
-    
+
     options = _.merge {}, defaultOptions, options
-  
+
     split = _.compact command.split /\s+/
     command = split.shift()
 
@@ -107,16 +107,29 @@ module.exports = (gulp, config) ->
         throw err if err
         cb()
 
+  gulp.task 'build', (cb) ->
+    run
+
   # TODO: clean too (?)
+  gulp.task 'build', (cb) ->
+    runSequence(
+      ['install', 'clean']
+      'tsd:link'
+      'schemas'
+      'config'
+      'webpack'
+      cb
+    )
+
   gulp.task 'develop', (cb) ->
     runSequence(
-      'install'
+      # 'install'
       'tsd:link'
+      'schemas'
       'config'
       [
         'nodemon'
-        # 'schemas'
-        'slc:arc'
+        'slc:arc' # TODO: configurable on/off
         # 'karma:watch' # TODO: fix and add back.
         'watch'
         # 'localtunnel' # FIXME: when your laptop goes to sleep localtunnel connection dies and kills whole server so removing this
@@ -139,13 +152,13 @@ module.exports = (gulp, config) ->
     watch '{client,common,server,build}/**/*.ts',   ['tslint', 'typedoc', 'patternlint:ts']
     watch 'client/**/*.html',                       ['htmlhint', 'patternlint:html']
     watch 'config/**/*',                            ['config']
-    # watch 'common/{schemas,models}/**/*.json',      ['schemas']
+    watch 'common/{schemas,models}/**/*.json',      ['schemas']
     watch '{bower,tsd,package}.json',               ['install']
     null
 
   # TODO: fix the dtsgen lib it sucks
   gulp.task 'schemas', (cb) ->
-    run "#{bin 'dtsgen'} --out dist/schemas.d.ts ./common/schemas/**/*.json ./common/models/**/*.json", cb
+    run "#{bin 'dtsgen'} --out dist/common/schemas.d.ts ./common/schemas/**/*.json ./common/models/**/*.json", cb
 
   gulp.task 'tsd:link', (cb) ->
     run "#{bin 'tsd'} link", cb
@@ -216,7 +229,7 @@ module.exports = (gulp, config) ->
     # TODO: port config
     run "#{bin 'slc'} arc --cli", cb, env: PORT: 5494
 
-  gulp.task 'webpack:watch', (cb) ->
+  gulp.task 'webpack', (cb) ->
     run bin('webpack'), cb
 
   gulp.task 'karma:watch', (cb) ->
@@ -279,6 +292,11 @@ module.exports = (gulp, config) ->
 
     cb()
 
+  gulp.task 'clean', ->
+    gulp
+      .src 'dist', read: false
+      .pipe $.clean()
+
   gulp.task 'config', (cb) ->
     # TODO: get path pieces like 'dist', from configs
     outPath = path.join process.cwd(), './dist/client/config.js'
@@ -286,6 +304,27 @@ module.exports = (gulp, config) ->
 
     # TODO: always use fresh config
     config = require '@popsugar/shopstyle-node-config'
+
+
+    # TODO: don't hardcode this anymore but make an API for dynamic configs (?)
+    # Load route configs from @State decorators in component files
+    componentFiles = glob.sync path.join process.cwd(), 'client/components/**/*-component.ts'
+    componentFiles.forEach (file) =>
+      contents = fs.readFileSync file, 'utf8'
+      matches = contents.match /@State\(([\s\S]+?)\)/
+      configString = matches && matches[1]
+
+      if configString
+        try
+          routeConfig = (new Function('return ' + configString))();
+        catch error
+          console.warn 'Could not parse state config string: ', configString
+
+      if routeConfig and not routeConfig.abstract
+        unless routeConfig.component
+          routeConfig.component = file.match(/([^\/]+?)-component\.ts$/)[1]
+
+        config.routes.push routeConfig
 
     # TODO: use safe json stringify
     configString = config.toString()
@@ -310,9 +349,9 @@ module.exports = (gulp, config) ->
   gulp.task 'typedoc', ->
     gulp
       .src [
-        '+(client|server|common)/**/*.ts' 
+        '+(client|server|common)/**/*.ts'
         # TODO: automate this and only include things that are imported as a dependency
-        # 'node_modules/@popsugar/*/+(client|server|common)/**/*.ts',  
+        # 'node_modules/@popsugar/*/+(client|server|common)/**/*.ts',
         # '!**/*.d.ts'
       ]
       .pipe(handleErrors())

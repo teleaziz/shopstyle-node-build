@@ -36,7 +36,7 @@ var componentsPath = path.join(paths.client, paths.components);
 
 var routes = (config.routes ? config.routes.slice() : []);
 
-config.routes = config.routes || [];
+// config.routes = config.routes || [];
 
 // Load route configs from @State decorators in component files
 var componentFiles = glob.sync(path.join(process.cwd(), 'client/components/**/*-component.ts'));
@@ -60,10 +60,6 @@ componentFiles.forEach(function (file) {
     }
 
     routes.push(routeConfig);
-    
-    if (!routeConfig.abstract) {
-      config.routes.push(routeConfig);
-    }
   }
 });
 
@@ -97,7 +93,6 @@ var entryComponents = components.reduce(function (memo, componentConfig) {
 var config = {
   cache: DEV,
   watch: DEV,
-  unsafeCache: DEV,
 
   stats: {
     colors: true,
@@ -191,8 +186,7 @@ var config = {
       templateContent: fs.readFileSync('./client/index.html', 'utf8')
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.ExtendedAPIPlugin(),
-    new webpack.DefinePlugin(_.merge(GLOBALS, { '__SERVER__': false })),
+    new webpack.DefinePlugin(GLOBALS),
     new webpack.ResolverPlugin(
       new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('package.json', ['main'])
     ),
@@ -207,7 +201,8 @@ var config = {
   ] : [
     // Release plugins
     new webpack.optimize.DedupePlugin(),
-    // new webpack.optimize.UglifyJsPlugin(), // TODO: readd
+    new webpack.ExtendedAPIPlugin(),
+    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
     new webpack.optimize.AggressiveMergingPlugin()
   ])
 };

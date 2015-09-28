@@ -62,8 +62,6 @@ class Generate
     @gulp.task "#{@options.taskName}:#{templateName}", (done) =>
       # TODO: be able to load base templates and per project templates
       baseDir = path.join __dirname, '../../'
-      console.log 'baseDir', baseDir
-      # baseDir = process.cwd()
 
       # Allows for _config.json, _config.js, _config.coffee, etc
       config = require path.join @options.templatesPath, templateName, '_config'
