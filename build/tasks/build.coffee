@@ -117,9 +117,14 @@ module.exports = (gulp, config) ->
       'tsd:link'
       'schemas'
       'config'
-      'webpack'
+      ['webpack', 'copy:assets']
       cb
     )
+
+  gulp.task 'copy:assets', ->
+    gulp
+      .src 'client/assets/**/*', base: 'client/assets'
+      .pipe gulp.dest 'dist/client'
 
   gulp.task 'develop', (cb) ->
     runSequence(
@@ -128,6 +133,7 @@ module.exports = (gulp, config) ->
       'schemas'
       'config'
       [
+        'copy:assets'
         'nodemon'
         'slc:arc' # TODO: configurable on/off
         # 'karma:watch' # TODO: fix and add back.

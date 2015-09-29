@@ -7,7 +7,15 @@ var Clean                 = require('clean-webpack-plugin');
 var HtmlWebpackPlugin     = require('html-webpack-plugin');
 var fs                    = require('fs');
 var WebpackNotifierPlugin = require('webpack-notifier');
-var config                = require('@popsugar/shopstyle-node-config');
+// var config                = require('@popsugar/shopstyle-node-config');
+var config = {};
+
+// FIXME: NASTY hack for process hanging
+if (!DEV) {
+  _.delay(function () {
+    process.exit(0);
+  }, 30000);  
+}
 
 // TODO: move to typescript
 var pkg = require(path.join(process.cwd(),'./package.json'));
