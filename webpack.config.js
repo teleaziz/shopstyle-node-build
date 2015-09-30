@@ -7,7 +7,7 @@ var Clean                 = require('clean-webpack-plugin');
 var HtmlWebpackPlugin     = require('html-webpack-plugin');
 var fs                    = require('fs');
 var WebpackNotifierPlugin = require('webpack-notifier');
-// var config                = require('@popsugar/shopstyle-node-config');
+var config                = require('@popsugar/shopstyle-node-config');
 var config = {};
 
 // TODO: move to typescript
@@ -24,11 +24,12 @@ var GLOBALS = {
   'ENV': process.env.NODE_ENV || DEV ? '"development"' : '"production"'
 };
 
-// FIXME: NASTY hack for process hanging
+// FIXME: NASTY hack for process hanging. Wait 60 seconds for a build and kill. Hope
+// the full build is done in 60 seconds. Maybe listen to stdout
 if (!DEV) {
   _.delay(function () {
     process.exit(0);
-  }, 30000);
+  }, 60000);
 }
 
 var paths = {
@@ -116,27 +117,12 @@ var config = {
 
   resolve: {
     extensions: ['', '.ts', '.js'],
-    alias: {
-
-    },
     modulesDirectories: [
       path.join(process.cwd(), 'node_modules'),
       path.join(process.cwd(), 'bower_components'),
       path.join(__dirname, 'node_modules'),
       path.join(__dirname, 'bower_components')
     ]
-  },
-
-  // TODO: this being used by server middleware? if not kill
-  devServer: {
-    contentBase: './dist/client',
-    inline: true,
-    hot: true,
-    historyApiFallback: true,
-    stats: { colors: true },
-    proxy: {
-      api: "http://localhost:3000"
-    }
   },
 
   module: {
@@ -200,7 +186,8 @@ var config = {
     ),
     new webpack.ResolverPlugin(
       new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
-    )
+    ),
+    new webpack.optimize.DedupePlugin()
   ].concat(DEV ? [
     // Dev plugins
     new WebpackNotifierPlugin()
@@ -208,7 +195,6 @@ var config = {
     , new webpack.NoErrorsPlugin()
   ] : [
     // Release plugins
-    new webpack.optimize.DedupePlugin(),
     new webpack.ExtendedAPIPlugin(),
     new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
     new webpack.optimize.AggressiveMergingPlugin()
