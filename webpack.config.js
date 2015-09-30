@@ -10,13 +10,6 @@ var WebpackNotifierPlugin = require('webpack-notifier');
 // var config                = require('@popsugar/shopstyle-node-config');
 var config = {};
 
-// FIXME: NASTY hack for process hanging
-if (!DEV) {
-  _.delay(function () {
-    process.exit(0);
-  }, 30000);  
-}
-
 // TODO: move to typescript
 var pkg = require(path.join(process.cwd(),'./package.json'));
 
@@ -30,6 +23,13 @@ var CSS_LOADER = DEV ? 'css-loader' : 'css-loader?minimize';
 var GLOBALS = {
   'ENV': process.env.NODE_ENV || DEV ? '"development"' : '"production"'
 };
+
+// FIXME: NASTY hack for process hanging
+if (!DEV) {
+  _.delay(function () {
+    process.exit(0);
+  }, 30000);
+}
 
 var paths = {
   dist: 'dist',
