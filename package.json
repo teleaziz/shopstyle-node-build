@@ -1,6 +1,6 @@
 {
   "name": "@popsugar/shopstyle-node-build",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "main": "index.js",
   "scripts": {
     "postinstall": "npm install strongloop nodemon webpack-dev-middleware tsd"
