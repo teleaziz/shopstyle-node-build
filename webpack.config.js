@@ -110,7 +110,8 @@ var config = {
   },
 
   resolveLoader: {
-    root: path.join(__dirname, './node_modules')
+    root: path.join(__dirname, './node_modules'),
+    fallback: path.join(process.cwd(), './node_modules')
   },
 
   context: process.cwd(),
