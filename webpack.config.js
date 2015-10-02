@@ -6,6 +6,7 @@ var glob                  = require('glob');
 var Clean                 = require('clean-webpack-plugin');
 var HtmlWebpackPlugin     = require('html-webpack-plugin');
 var fs                    = require('fs');
+var os                    = require('os');
 var WebpackNotifierPlugin = require('webpack-notifier');
 var config                = require('@popsugar/shopstyle-node-config');
 var config = {};
@@ -26,8 +27,9 @@ var GLOBALS = {
 
 // FIXME: NASTY hack for process hanging. Wait 60 seconds for a build and kill. Hope
 // the full build is done in 60 seconds. Maybe listen to stdout
-if (!DEV) {
+if (!DEV && !_.contains(os.hostname(), 'web')) {
   _.delay(function () {
+
     process.exit(0);
   }, 60000);
 }
