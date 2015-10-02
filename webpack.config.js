@@ -164,7 +164,9 @@ var config = {
   entry: _.extend({}, entryComponents, {
     init: [
       path.join(process.cwd(), 'client/scripts/init.ts')
-    ].concat(DEV ? [path.join(__dirname, 'node_modules/webpack-hot-middleware/client.js?reload=true&overlay=true')] : [])
+      // TODO: don't use process.cwd(), use dirname but this breaks via npm parent package installation issues
+    ].concat(DEV ? [path.join(process.cwd(), 'node_modules/webpack-hot-middleware/client.js?reload=true&overlay=true')] : [])
+    // ].concat(DEV ? [path.join(__dirname, 'node_modules/webpack-hot-middleware/client.js?reload=true&overlay=true')] : [])
   }),
   output: {
     path: path.join(process.cwd(), './dist/client'),
