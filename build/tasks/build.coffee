@@ -91,12 +91,18 @@ module.exports = (gulp, config) ->
 
   gulp.task 'default', ['help']
 
-  # TODO: move tsd here
-  # TODO: move all to bower
-  gulp.task 'install', ->
-    gulp
-      .src ['package.json', 'tsd.json', 'bower.json']
-      .pipe $.install()
+  gulp.task 'install:npm', (cb) ->
+    run 'npm install', cb
+
+  gulp.task 'install:tsd', (cb) ->
+    run "#{bin 'tsd'} reinstall"
+
+  gulp.tasl 'install:bower', (cb) ->
+    run "#{bind 'bower'} install"
+
+  # TODO: doesn't always work. may want to manually run instead...
+  gulp.task 'install', (cb) ->
+    runSequence ['install:npm', 'install:bower', 'install:tsd']
 
   gulp.task 'git:pull', (cb) ->
     # TODO: upstream
@@ -129,14 +135,13 @@ module.exports = (gulp, config) ->
 
   gulp.task 'develop', (cb) ->
     runSequence(
-      # 'install'
+      'install'
       'tsd:link'
       'schemas'
       'config'
       [
         'copy:assets'
         'nodemon'
-        'slc:arc' # TODO: configurable on/off
         # 'karma:watch' # TODO: fix and add back.
         'watch'
         # 'localtunnel' # FIXME: when your laptop goes to sleep localtunnel connection dies and kills whole server so removing this
@@ -245,11 +250,6 @@ module.exports = (gulp, config) ->
     # TODO: these paths aren't working...
     run "#{bin 'nodemon'} -e js,ts,json --watch server --watch common --watch #{absolute 'webpack.config.js'} #{absolute '.'}", cb
 
-  # TODO: configure port
-  gulp.task 'slc:arc', (cb) ->
-    # TODO: port config
-    run "#{bin 'slc'} arc --cli", cb, env: PORT: 5494
-
   gulp.task 'webpack', (cb) ->
     run bin('webpack'), cb
 
@@ -307,7 +307,7 @@ module.exports = (gulp, config) ->
 
     # manually remove any /// <reference path="..." /> from the compiled code
     # so typescript doesn't complain about duplication
-    fileString = fileString.replace /\/\/\/.*?<.*?reference.*?path.*?\n/g, '\n'
+    # fileString = fileString.replace /\/\/\/.*?<.*?reference.*?path.*?\n/g, '\n'
 
     fs.outputFileSync outPath, fileString
 

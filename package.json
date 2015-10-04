@@ -2,9 +2,6 @@
   "name": "@popsugar/shopstyle-node-build",
   "version": "0.0.35",
   "main": "index.js",
-  "scripts": {
-    "postinstall": "npm install strongloop nodemon webpack-dev-middleware tsd"
-  },
   "dependencies": {
     "@popsugar/dtsgenerator": "^0.1.5",
     "@popsugar/shopstyle-node-config": "0.0.10",
@@ -53,7 +50,6 @@
     "source-map-support": "^0.3.2",
     "steve8708-typescript-register": "^1.1.4",
     "strip-ansi": "^3.0.0",
-    "strongloop": "^5.0.0",
     "style-loader": "^0.12.3",
     "ts-loader": "^0.5.5",
     "tsd": "^0.6.4",
