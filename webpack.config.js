@@ -202,7 +202,9 @@ var config = {
     new webpack.ResolverPlugin(
       new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
     ),
-    // new webpack.optimize.DedupePlugin() // Causes error: No template for dependency: TemplateArgumentDependency
+    // NOTE: When it finds duplicate packages it can cause error:
+    // No template for dependency: TemplateArgumentDependency
+    new webpack.optimize.DedupePlugin()
   ].concat(DEV ? [
     // Dev plugins
     new WebpackNotifierPlugin()
