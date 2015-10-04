@@ -9,7 +9,10 @@ var fs                    = require('fs');
 var os                    = require('os');
 var WebpackNotifierPlugin = require('webpack-notifier');
 var config                = require('@popsugar/shopstyle-node-config');
-var config = {};
+var findup                = require('findup');
+
+var hotMiddlewareClientPath = 'node_modules/webpack-hot-middleware/client.js';
+var hotMIddlewareLocation = findup.sync(__dirname, hotMiddlewareClientPath);
 
 // TODO: move to typescript
 var pkg = require(path.join(process.cwd(),'./package.json'));
@@ -112,6 +115,7 @@ var config = {
   },
 
   resolveLoader: {
+    // TODO: use findup to manually add all node_modules directories up from here?
     root: path.join(__dirname, './node_modules'),
     fallback: path.join(process.cwd(), './node_modules')
   },
@@ -121,10 +125,13 @@ var config = {
   resolve: {
     extensions: ['', '.ts', '.js'],
     modulesDirectories: [
-      path.join(process.cwd(), 'node_modules'),
-      path.join(process.cwd(), 'bower_components'),
-      path.join(__dirname, 'node_modules'),
-      path.join(__dirname, 'bower_components')
+      'node_modules',
+      'bower_components'
+      // path.join(process.cwd(), 'node_modules'),
+      // path.join(process.cwd(), 'bower_components'),
+      // path.join(__dirname, 'node_modules'),
+      // path.join(__dirname, 'bower_components')
+      // TODO: common too
     ],
     alias: {
       'chart.js': 'Chart.js'
@@ -169,8 +176,8 @@ var config = {
   entry: _.extend({}, entryComponents, {
     init: [
       path.join(process.cwd(), 'client/scripts/init.ts')
-      // TODO: don't use process.cwd(), use dirname but this breaks via npm parent package installation issues
-    ].concat(DEV ? [path.join(process.cwd(), 'node_modules/webpack-hot-middleware/client.js?reload=true&overlay=true')] : [])
+      // TODO: walk up looking for this
+    ].concat(DEV ? [path.join(hotMIddlewareLocation, hotMiddlewareClientPath + '?reload=true&overlay=true')] : [])
     // ].concat(DEV ? [path.join(__dirname, 'node_modules/webpack-hot-middleware/client.js?reload=true&overlay=true')] : [])
   }),
   output: {
@@ -195,7 +202,7 @@ var config = {
     new webpack.ResolverPlugin(
       new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
     ),
-    new webpack.optimize.DedupePlugin()
+    // new webpack.optimize.DedupePlugin() // Causes error: No template for dependency: TemplateArgumentDependency
   ].concat(DEV ? [
     // Dev plugins
     new WebpackNotifierPlugin()

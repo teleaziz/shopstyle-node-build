@@ -11,6 +11,7 @@ glob = require 'glob'
 fs = require 'fs-extra'
 notifier = require 'node-notifier'
 config = require '@popsugar/shopstyle-node-config'
+findup = require 'findup'
 
 pkg = require path.join process.cwd(), 'package.json'
 tsConfig = require path.join process.cwd(), 'tsconfig.json'
@@ -26,7 +27,9 @@ module.exports = (gulp, config) ->
 
   # Get local node module binary path
   bin = (binary) ->
-    path.join __dirname, "../../node_modules/.bin/#{binary}"
+    binPath = "node_modules/.bin/#{binary}"
+    result = findup.sync __dirname, binPath
+    path.join result, binPath
 
   absolute = (dirPath) ->
     path.join process.cwd(), dirPath
@@ -95,7 +98,7 @@ module.exports = (gulp, config) ->
     run 'npm install', cb
 
   gulp.task 'install:tsd', (cb) ->
-    run "#{bin 'tsd'} reinstall", cb
+    run "#{bin 'tsd'} install", cb
 
   gulp.task 'install:bower', (cb) ->
     run "#{bin 'bower'} install", cb
@@ -113,9 +116,6 @@ module.exports = (gulp, config) ->
       , (err) ->
         throw err if err
         cb()
-
-  gulp.task 'build', (cb) ->
-    run
 
   # TODO: clean too (?)
   gulp.task 'build', (cb) ->
