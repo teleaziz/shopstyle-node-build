@@ -323,9 +323,7 @@ module.exports = (gulp, config) ->
     outPath = path.join process.cwd(), './dist/client/config.js'
     jsonPath = path.join process.cwd(), './dist/common/config.json'
 
-    # TODO: always use fresh config
-    config = require '@popsugar/shopstyle-node-config'
-
+    config.routes ?= []
 
     # TODO: don't hardcode this anymore but make an API for dynamic configs (?)
     # Load route configs from @State decorators in component files
