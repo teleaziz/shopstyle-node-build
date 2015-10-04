@@ -10,6 +10,7 @@ path = require 'path'
 glob = require 'glob'
 fs = require 'fs-extra'
 notifier = require 'node-notifier'
+config = require '@popsugar/shopstyle-node-config'
 
 pkg = require path.join process.cwd(), 'package.json'
 tsConfig = require path.join process.cwd(), 'tsconfig.json'
@@ -222,6 +223,20 @@ module.exports = (gulp, config) ->
 
   # TODO
   gulp.task 'htmlhint', ->
+    try
+      settings = require process.cwd(), '.htmlhintrc'
+
+    settings ?= {}
+
+    # TODO: break up configs by plugin names
+    _.extend settings, config.htmlhint
+
+    gulp
+      .src 'client/**/*.html'
+      .pipe $.htmlhint settings or {}
+      # TODO: when in CI mode (maybe NODE_ENV=qa or production) fail on this
+      .pip $.htmlhint.reporter()
+
 
   # TODO: browsersync
   gulp.task 'nodemon', (cb) ->

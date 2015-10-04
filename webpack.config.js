@@ -141,7 +141,7 @@ var config = {
         loader: 'json'
       }, {
         test: /\.ts$/,
-        loader: 'awesome-typescript',
+        loader: 'ts',
         exclude: /\.d\.ts$/
       }, {
         test: /\.css$/,

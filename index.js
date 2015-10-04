@@ -7,18 +7,18 @@ require('coffee-script/register');
  * @todo plugin support
  */
 module.exports = function SSBuild (config) {
-  
+
   this.config = config;
 
-  // TODO: pass in webpack and karma? necessary?
+  // TODO: pass in config to webpack and karma? necessary?
   this.webpack = function () {
     return require('./webpack.config.js');
   };
-  
+
   this.karma = function () {
     return require('./karma.config.js');
   };
-  
+
   this.protractor = function () {
     return require('./protractor.config.js');
   };

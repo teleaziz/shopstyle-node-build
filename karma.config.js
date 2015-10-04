@@ -22,71 +22,7 @@ module.exports = function(config) {
       'client/**/*.spec.ts': ['webpack']
     },
 
-    webpack: {
-      devtool: 'eval-cheap-source-map',
-  		resolve: {
-  			extensions: ['', '.js', '.ts'],
-        modulesDirectories: [
-          'node_modules',
-          'bower_components'
-        ],
-        alias: {
-
-        }
-  		},
-  		module: {
-        loaders: [
-          {
-            test: /\.html$/,
-            loader: 'raw!html-minify'
-          }, {
-            test: /\.json$/,
-            loader: 'json'
-          }, {
-            test: /\.ts$/,
-            loader: 'awesome-typescript'
-          }, {
-            test: /\.scss$/,
-            loader: [STYLE_LOADER, CSS_LOADER, 'sass'].join('!')
-          }, {
-            test: /\.gif/,
-            loader: 'url-loader?limit=10000&mimetype=image/gif'
-          }, {
-            test: /\.jpg/,
-            loader: 'url-loader?limit=10000&mimetype=image/jpg'
-          }, {
-            test: /\.png/,
-            loader: 'url-loader?limit=10000&mimetype=image/png'
-          }, {
-            test: /\.svg/,
-            loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
-          }
-        ]
-  		},
-      plugins: [
-        new webpack.ExtendedAPIPlugin(),
-        new webpack.ResolverPlugin(
-            new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('package.json', ['main'])
-        ),
-        new webpack.ResolverPlugin(
-            new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
-        )
-      ],
-      externals: /^[a-z\-0-9]+$/
-    },
-
-    // frameworks: ['webpack'],
-
-    webpackMiddleware: {
-      // webpack-dev-middleware configuration
-      // i. e.
-      noInfo: true,
-      stats: {
-        color: true,
-        chunkModules: false,
-        modules: false
-      }
-    },
+    webpack: require('./webpack.config.js')
 
     frameworks: ['mocha', 'chai'],
 
