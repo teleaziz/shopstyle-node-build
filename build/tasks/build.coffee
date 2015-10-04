@@ -10,7 +10,6 @@ path = require 'path'
 glob = require 'glob'
 fs = require 'fs-extra'
 notifier = require 'node-notifier'
-config = require '@popsugar/shopstyle-node-config'
 findup = require 'findup'
 
 pkg = require path.join process.cwd(), 'package.json'
@@ -322,6 +321,7 @@ module.exports = (gulp, config) ->
     # TODO: get path pieces like 'dist', from configs
     outPath = path.join process.cwd(), './dist/client/config.js'
     jsonPath = path.join process.cwd(), './dist/common/config.json'
+    config = require '@popsugar/shopstyle-node-config'
 
     config.routes ?= []
 
@@ -332,7 +332,6 @@ module.exports = (gulp, config) ->
       contents = fs.readFileSync file, 'utf8'
       matches = contents.match /@State\(([\s\S]+?)\)/
       configString = matches && matches[1]
-      config.routes ?= {}
 
       if configString
         try
