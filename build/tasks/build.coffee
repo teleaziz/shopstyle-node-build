@@ -334,6 +334,7 @@ module.exports = (gulp, config) ->
       contents = fs.readFileSync file, 'utf8'
       matches = contents.match /@State\(([\s\S]+?)\)/
       configString = matches && matches[1]
+      config.routes ?= {}
 
       if configString
         try

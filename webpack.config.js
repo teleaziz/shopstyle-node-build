@@ -125,12 +125,12 @@ var config = {
   resolve: {
     extensions: ['', '.ts', '.js'],
     modulesDirectories: [
-      'node_modules',
-      'bower_components'
-      // path.join(process.cwd(), 'node_modules'),
-      // path.join(process.cwd(), 'bower_components'),
-      // path.join(__dirname, 'node_modules'),
-      // path.join(__dirname, 'bower_components')
+      // 'node_modules',
+      // 'bower_components'
+      path.join(process.cwd(), 'node_modules'),
+      path.join(process.cwd(), 'bower_components'),
+      path.join(__dirname, 'node_modules'),
+      path.join(__dirname, 'bower_components')
       // TODO: common too
     ],
     alias: {
