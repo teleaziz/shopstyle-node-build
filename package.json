@@ -1,6 +1,6 @@
 {
   "name": "@popsugar/shopstyle-node-build",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "main": "index.js",
   "dependencies": {
     "@popsugar/dtsgenerator": "^0.1.5",
