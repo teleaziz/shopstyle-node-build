@@ -95,14 +95,14 @@ module.exports = (gulp, config) ->
     run 'npm install', cb
 
   gulp.task 'install:tsd', (cb) ->
-    run "#{bin 'tsd'} reinstall"
+    run "#{bin 'tsd'} reinstall", cb
 
-  gulp.tasl 'install:bower', (cb) ->
-    run "#{bind 'bower'} install"
+  gulp.task 'install:bower', (cb) ->
+    run "#{bin 'bower'} install", cb
 
   # TODO: doesn't always work. may want to manually run instead...
   gulp.task 'install', (cb) ->
-    runSequence ['install:npm', 'install:bower', 'install:tsd']
+    runSequence ['install:npm', 'install:bower', 'install:tsd'], cb
 
   gulp.task 'git:pull', (cb) ->
     # TODO: upstream

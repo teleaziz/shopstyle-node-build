@@ -1,4 +1,3 @@
-require('steve8708-typescript-register');
 require('coffee-script/register');
 
 /**
