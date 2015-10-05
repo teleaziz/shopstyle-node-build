@@ -192,6 +192,7 @@ var config = {
     new webpack.optimize.AggressiveMergingPlugin(),
     new HtmlWebpackPlugin({
       title: _.startCase(pkg.name),
+      pkg: pkg,
       templateContent: fs.readFileSync('./client/index.html', 'utf8')
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
