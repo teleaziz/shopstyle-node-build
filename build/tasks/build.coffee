@@ -227,17 +227,16 @@ module.exports = (gulp, config) ->
 
   # TODO
   gulp.task 'htmlhint', ->
+    settings = config.defaultConfigOptions.htmlhint or {}
+
     try
-      settings = require path.join process.cwd(), '.htmlhintrc'
+      settings = JSON.parse fs.readFileSync path.join(process.cwd(), '.htmlhintrc'), 'utf8'
 
-    settings ?= {}
-
-    # TODO: break up configs by plugin names
-    _.extend settings, config.htmlhint
+    _.assign settings, config.htmlhint
 
     gulp
       .src 'client/**/*.html'
-      .pipe $.htmlhint settings or {}
+      .pipe $.htmlhint settings
       # TODO: when in CI mode (maybe NODE_ENV=qa or production) fail on this
       .pipe $.htmlhint.reporter()
 
