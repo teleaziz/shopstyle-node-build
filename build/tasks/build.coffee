@@ -206,13 +206,13 @@ module.exports = (gulp, config) ->
       .pipe($.patternlint.reporter());
 
   gulp.task 'webdriver:update', (cb) ->
-    run "#{run 'webdriver-manager'} update", cb
+    run "#{bin 'webdriver-manager'} update", cb
 
   gulp.task 'webdriver:start', (cb) ->
-    run "#{run 'webdriver-manager'} start", cb
+    run "#{bin 'webdriver-manager'} start", cb
 
   gulp.task 'protractor:run', (cb) ->
-    run "#{run 'protractor'} protractor.config.js", cb
+    run "#{bin 'protractor'} protractor.config.js", cb
 
   # TODO
   gulp.task 'tslint', ->
@@ -228,7 +228,7 @@ module.exports = (gulp, config) ->
   # TODO
   gulp.task 'htmlhint', ->
     try
-      settings = require process.cwd(), '.htmlhintrc'
+      settings = require path.join process.cwd(), '.htmlhintrc'
 
     settings ?= {}
 
@@ -239,8 +239,7 @@ module.exports = (gulp, config) ->
       .src 'client/**/*.html'
       .pipe $.htmlhint settings or {}
       # TODO: when in CI mode (maybe NODE_ENV=qa or production) fail on this
-      .pip $.htmlhint.reporter()
-
+      .pipe $.htmlhint.reporter()
 
   # TODO: browsersync
   gulp.task 'nodemon', (cb) ->
@@ -346,7 +345,7 @@ module.exports = (gulp, config) ->
         config.routes.push routeConfig
 
     # TODO: use safe json stringify
-    configString = config.toString()
+    configString = config.$stringify()
     # TODO: get from configs with defaults
     moduleName = 'app'
     configConstantName = 'config'
@@ -354,6 +353,12 @@ module.exports = (gulp, config) ->
     # TODO: render a typescript file too and/or json file for importing in TS files?
     fileString = """
       window.config = #{configString};
+
+      try {
+        window.config.$loadFromHost(window.location.host);
+      } catch (error) {
+        console.error('Could not load from host', error);
+      }
 
       angular
         .module('#{moduleName}')
