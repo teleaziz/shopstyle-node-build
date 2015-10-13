@@ -393,3 +393,45 @@ module.exports = (gulp, config) ->
         experimentalDecorators: true
         version: true
         json: 'dist/docs/json'
+
+
+  gulp.task 'deploy', (cb) ->
+    runSequence 'build', 'publish', cb
+
+  # Publish to S3 and cloudfront invalidate
+  gulp.task 'publish', ->
+    awsInfo =
+      accessKeyId: config.deploy?.awsKeyId or process.env.AWS_ACCESS_KEY_ID
+      secretAccessKey: config.deploy?.awsSecret or process.env.AWS_SECRET_ACCESS_KEY
+      params:
+        # IMPORTANT: add s3 bucket here
+        # TODO: get from configs
+        Bucket: config.deploy?.bucket
+
+    unless awsInfo.params.Bucket
+      throw new Error 'You must specify a bucket to publish to!'
+
+    publisher = $.awspublish.create awsInfo
+
+    headers =
+      'Cache-Control': 'max-age=315360000, no-transform, public'
+
+    indexHeaders =
+      'Cache-Control': 'no-cache'
+
+    indexFilter = $.filter '**/index.html', restore: true
+    nonIndexFilter = $.filter '!**/index.html', restore: true
+
+    gulp
+      .src './dist/client/**'
+      .pipe $.awspublish.gzip()
+      .pipe nonIndexFilter
+      .pipe publisher.publish headers
+      .pipe nonIndexFilter.restore
+      .pipe indexFilter
+      .pipe publisher.publish indexHeaders
+      .pipe indexFilter.restore
+      .pipe publisher.cache()
+      .pipe $.awspublish.reporter()
+      # Uncomment if using cloudfront
+      # .pipe $.cloudfront awsInfo

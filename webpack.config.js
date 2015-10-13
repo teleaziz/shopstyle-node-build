@@ -160,7 +160,7 @@ var config = {
         test: /\.gif/,
         loader: 'url-loader?limit=10000&mimetype=image/gif'
       }, {
-        test: /\.jpg/,
+        test: /\.(jpg|jpeg)/,
         loader: 'url-loader?limit=10000&mimetype=image/jpg'
       }, {
         test: /\.png/,
