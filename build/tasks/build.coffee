@@ -11,6 +11,9 @@ glob = require 'glob'
 fs = require 'fs-extra'
 notifier = require 'node-notifier'
 findup = require 'findup'
+jsonSchemaGenerator = require 'json-schema-generator'
+stringify = require 'json-stringify-safe'
+traverse = require 'traverse'
 
 pkg = require path.join process.cwd(), 'package.json'
 tsConfig = require path.join process.cwd(), 'tsconfig.json'
@@ -310,6 +313,26 @@ module.exports = (gulp, config) ->
 
     cb()
 
+  gulp.task 'typings:config', (cb) ->
+    _config = require '@popsugar/shopstyle-node-config'
+
+    _config = JSON.parse stringify _config
+
+    schema = jsonSchemaGenerator _config
+
+    traversedConfig = traverse config
+    traverse(schema).forEach (item) ->
+      if item and item.type is 'array'
+        configValue = traversedConfig.get @path
+        type = jsonSchemaGenerator(configValue?[0] || {}).type
+        item.items.type = type
+        this.update item
+
+    outputPath = './dist/common/config.schema.json'
+    fs.outputFileSync path.join(process.cwd(), outputPath), JSON.stringify schema, null, 2
+
+    run "#{bin 'dtsgen'} --out ./dist/common/config.d.ts #{outputPath}", cb
+
   gulp.task 'clean', ->
     gulp
       .src 'dist', read: false
@@ -365,7 +388,7 @@ module.exports = (gulp, config) ->
     """
 
     fs.outputFileSync outPath, fileString
-    fs.outputFileSync jsonPath, configString
+    fs.outputFileSync jsonPath, stringify config
 
     cb()
 

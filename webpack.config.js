@@ -28,15 +28,6 @@ var GLOBALS = {
   'ENV': process.env.NODE_ENV || DEV ? '"development"' : '"production"'
 };
 
-// FIXME: NASTY hack for process hanging. Wait 60 seconds for a build and kill. Hope
-// the full build is done in 60 seconds. Maybe listen to stdout
-if (!DEV && !_.contains(os.hostname(), 'web')) {
-  _.delay(function () {
-
-    process.exit(0);
-  }, 60000);
-}
-
 var paths = {
   dist: 'dist',
   client: 'client',
