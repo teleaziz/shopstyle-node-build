@@ -4,7 +4,7 @@
   "main": "index.js",
   "dependencies": {
     "@popsugar/dtsgenerator": "^0.1.5",
-    "@popsugar/shopstyle-node-config": "0.0.20",
+    "@popsugar/shopstyle-node-config": "0.0.21",
     "ansi-regex": "^2.0.0",
     "awesome-typescript-loader": "^0.13.1",
     "bower": "^1.5.3",
