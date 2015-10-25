@@ -256,6 +256,13 @@ module.exports = (gulp, config) ->
   gulp.task 'karma:watch', (cb) ->
     run "#{bin 'karma'} start karma.config.js", cb
 
+  gulp.task 'tsc', (cb) ->
+    run "#{bin 'tsc'}", cb
+
+  # TODO: use gulp watch
+  gulp.task 'tsc:watch', (cb) ->
+    run "#{bin 'tsc'}  --watch", cb
+
   # gulp.task 'dts:bundle', (cb) ->
 
   #   dts.bundle
