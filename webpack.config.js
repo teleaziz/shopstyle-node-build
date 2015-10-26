@@ -90,7 +90,14 @@ var components = routes
   });
 
 var entryComponents = components.reduce(function (memo, componentConfig) {
-  memo[componentConfig.component] = [componentConfig.path];
+  var paths = memo[componentConfig.component] = [componentConfig.path];
+  // // TODO: configurable app dependencies
+  // // TODO: other way so of telling if is external?
+  // if (componentConfig.module) {
+  //   // Include app dependencies with external components
+  //   paths.unshift(path.join(process.cwd(), 'client/scripts/dependencies/app.ts'));
+  // }
+
   return memo;
 }, {});
 
@@ -125,7 +132,9 @@ var config = {
       // TODO: common too
     ],
     alias: {
-      'chart.js': 'Chart.js'
+      // TODO: get from configs
+      'chart.js': 'Chart.js',
+      '@host': path.join(process.cwd(), 'client/scripts/dependencies/app')
     }
   },
 
@@ -178,6 +187,7 @@ var config = {
   },
   plugins: [
     new webpack.PrefetchPlugin(path.join(process.cwd(), 'client/scripts/dependencies/app.ts')),
+    // This one may be pointless
     new webpack.PrefetchPlugin(path.join(process.cwd(), 'client/styles/dependencies/app.scss')),
     new webpack.optimize.CommonsChunkPlugin('common', 'common-[hash].js'),
     new webpack.optimize.AggressiveMergingPlugin(),
