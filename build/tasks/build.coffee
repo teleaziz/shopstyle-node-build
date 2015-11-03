@@ -135,6 +135,9 @@ module.exports = (gulp, config) ->
       .src 'client/assets/**/*', base: 'client/assets'
       .pipe gulp.dest 'dist/client'
 
+  # TODO: option to start server without install
+  # TODO: separate webpack server and build so server can restart
+  #       in parallel to client rebuild
   gulp.task 'develop', (cb) ->
     runSequence(
       'install'

@@ -50,7 +50,7 @@ class Generate
     name: 'name'
     validate: (input) ->
       # Only allow word characters, -, _, spaces
-      unless input.trim().match /^[\w\d\s]+$/
+      unless input.trim().match /^[\w\d\s\-]+$/
         return "Name must contain only a-z, 0-9, -, _, and spaces"
       true
 

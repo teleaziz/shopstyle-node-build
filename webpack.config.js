@@ -170,8 +170,9 @@ var config = {
         loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
       }
     ],
-    // TODO: noParse all bower components
-    noParse: /(\/ace-builds|\.d\.ts$)/
+    // TODO: noparse bower components, parse node modules
+    // noParse: /node_modules|bower_components/
+    noParse: /(\/ace-builds|jsondiffpatch|\.d\.ts$)/
   },
   entry: _.extend({}, entryComponents, {
     init: [
