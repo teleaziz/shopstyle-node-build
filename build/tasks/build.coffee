@@ -14,6 +14,7 @@ findup = require 'findup'
 jsonSchemaGenerator = require 'json-schema-generator'
 stringify = require 'json-stringify-safe'
 traverse = require 'traverse'
+argv = require('yargs').argv
 
 pkg = require path.join process.cwd(), 'package.json'
 tsConfig = require path.join process.cwd(), 'tsconfig.json'
@@ -122,7 +123,9 @@ module.exports = (gulp, config) ->
   # TODO: clean too (?)
   gulp.task 'build', (cb) ->
     runSequence(
-      ['install', 'clean']
+      [
+        'clean'
+      ].concat if argv.install is false then [] else ['install']
       'tsd:link'
       'schemas'
       'config'
@@ -140,7 +143,9 @@ module.exports = (gulp, config) ->
   #       in parallel to client rebuild
   gulp.task 'develop', (cb) ->
     runSequence(
-      'install'
+      [
+        'clean'
+      ].concat if argv.install is false then [] else ['install']
       'tsd:link'
       'schemas'
       'config'
