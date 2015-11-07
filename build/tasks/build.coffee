@@ -97,6 +97,12 @@ module.exports = (gulp, config) ->
       if /.*\+.*hidden\smodules/.test data
         cb()
 
+      # TODO: there could be different webpack configurations where this
+      # message doesn't show up or the message text is changed. figure out the
+      # root cause of webpack hanging so we can remove this
+      if /.*\+.*hidden\smodules/.test data
+        cb()
+
     spawned.stderr.on 'data', (data) ->
       process.stderr.write prefixOutput data, 'red'
 
