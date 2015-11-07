@@ -28,6 +28,13 @@ colors = ['cyan', 'magenta', 'blue', 'yellow']
 module.exports = (gulp, config) ->
   runSequence = require('run-sequence').use gulp
 
+  # this is really nasty, but webpack process is hanging so the only way to get
+  # the CI server build working is to kill the process manually
+  kill = (cb) ->
+    ->
+       cb?()
+       process.exit 0
+
   # Get local node module binary path
   bin = (binary) ->
     binPath = "node_modules/.bin/#{binary}"
@@ -87,6 +94,8 @@ module.exports = (gulp, config) ->
 
     spawned.stdout.on 'data', (data) ->
       process.stdout.write prefixOutput data, color
+      if /.*\+.*hidden\smodules/.test data
+        cb()
 
     spawned.stderr.on 'data', (data) ->
       process.stderr.write prefixOutput data, 'red'
@@ -130,7 +139,8 @@ module.exports = (gulp, config) ->
       'schemas'
       'config'
       ['webpack', 'copy:assets']
-      cb
+      kill cb
+      # cb
     )
 
   gulp.task 'copy:assets', ->
