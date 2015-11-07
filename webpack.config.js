@@ -210,9 +210,9 @@ var config = {
     new webpack.optimize.DedupePlugin()
   ].concat(DEV ? [
     // Dev plugins
-    new WebpackNotifierPlugin()
-    , new webpack.HotModuleReplacementPlugin()
-    , new webpack.NoErrorsPlugin()
+    new WebpackNotifierPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
   ] : [
     // Release plugins
     new webpack.ExtendedAPIPlugin(),
