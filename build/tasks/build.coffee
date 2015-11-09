@@ -474,7 +474,7 @@ module.exports = (gulp, config) ->
       'Cache-Control': 'no-cache'
 
     indexFilter = $.filter '**/index.html', restore: true
-    nonIndexFilter = $.filter '!**/index.html', restore: true
+    nonIndexFilter = $.filter ['*','!**/index.html'], restore: true
 
     gulp
       .src './dist/client/**'
