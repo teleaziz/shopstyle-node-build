@@ -35,10 +35,14 @@ module.exports = (gulp, config) ->
        cb?()
        process.exit 0
 
-  # Get local node module binary path
+  # Get local node module binary path, or if not found use the
+  # original executable and assume it is in the user's $PATH, e.g. 'npm'
   bin = (binary) ->
     binPath = "node_modules/.bin/#{binary}"
-    result = findup.sync __dirname, binPath
+    try
+      result = findup.sync __dirname, binPath
+    catch
+      result = binary
     path.join result, binPath
 
   absolute = (dirPath) ->
