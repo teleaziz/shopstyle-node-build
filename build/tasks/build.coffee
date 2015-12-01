@@ -40,10 +40,9 @@ module.exports = (gulp, config) ->
   bin = (binary) ->
     binPath = "node_modules/.bin/#{binary}"
     try
-      result = findup.sync __dirname, binPath
+      return path.join findup.sync(__dirname, binPath), binPath
     catch
-      result = binary
-    path.join result, binPath
+      return binary
 
   absolute = (dirPath) ->
     path.join process.cwd(), dirPath

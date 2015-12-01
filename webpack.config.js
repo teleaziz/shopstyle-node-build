@@ -121,7 +121,7 @@ var config = {
   context: process.cwd(),
 
   resolve: {
-    extensions: ['', '.ts', '.js'],
+    extensions: ['', '.ts', '.js', '.scss'],
     modulesDirectories: [
       path.join(process.cwd(), 'bower_components'),
       path.join(process.cwd(), 'node_modules'),
@@ -134,7 +134,8 @@ var config = {
     alias: {
       // TODO: get from configs
       'chart.js': 'Chart.js',
-      '@host': path.join(process.cwd(), 'client/scripts/dependencies/app')
+      '@host': path.join(process.cwd(), 'client/scripts/dependencies/app'),
+      '@host-scss': path.join(process.cwd(), 'client/styles/dependencies/app')
     }
   },
 
