@@ -1,9 +1,7 @@
-node_modules/
-bower_components/
-dist/
-tmp/
-public/
-typings/
-.strong-pm/
-npm-debug.log
-.awcache
+/nbproject/
+/.idea/*
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
