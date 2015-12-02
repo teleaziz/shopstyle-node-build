@@ -145,7 +145,7 @@ module.exports = (gulp, config) ->
         'clean'
       ].concat if argv.install is false then [] else ['install']
       'tsd:link'
-      'schemas'
+      # 'schemas'
       'config'
       ['webpack', 'copy:assets']
       kill cb
@@ -166,7 +166,7 @@ module.exports = (gulp, config) ->
         'clean'
       ].concat if argv.install is false then [] else ['install']
       'tsd:link'
-      'schemas'
+      # 'schemas'
       'config'
       [
         'copy:assets'
@@ -193,13 +193,13 @@ module.exports = (gulp, config) ->
     watch '{client,common,server,build}/**/*.ts',   ['tslint', 'typedoc', 'patternlint:ts']
     watch 'client/**/*.html',                       ['htmlhint', 'patternlint:html']
     watch 'config/**/*',                            ['config']
-    watch 'common/{schemas,models}/**/*.json',      ['schemas']
+    # watch 'common/{schemas,models}/**/*.json',      ['schemas']
     watch '{bower,tsd,package}.json',               ['install']
     null
 
   # TODO: fix the dtsgen lib it sucks
-  gulp.task 'schemas', (cb) ->
-    run "#{bin 'dtsgen'} --out dist/common/schemas.d.ts ./common/schemas/**/*.json ./common/models/**/*.json", cb
+  # gulp.task 'schemas', (cb) ->
+  #   run "#{bin 'dtsgen'} --out dist/common/schemas.d.ts ./common/schemas/**/*.json ./common/models/**/*.json", cb
 
   gulp.task 'tsd:link', (cb) ->
     run "#{bin 'tsd'} link", cb
